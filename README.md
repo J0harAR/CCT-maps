@@ -125,7 +125,9 @@ This is an example of how to list things you need to use the software and how to
 3. Install NPM packages
    ```sh
    npm install
+   npm install -g nodemon
    ```
+   
 4. Enter your API in `index.html`
    ```js
    <script src="https://maps.googleapis.com/maps/api/js?key='ENTER YOUR API'"></script>
