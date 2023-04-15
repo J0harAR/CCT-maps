@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mapa de Centros de Trabajo</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body onload="initMap()">
+    <form method="get">
+      <label for="estado">Estado:</label>
+      <select id="estado">
+        <option value="OAXACA">Oaxaca</option>
+        <option value="TABASCO">Tabasco</option>
+        <option value="PUEBLA">Puebla</option>
+      
+      </select>
+      <label for="nivel">Nivel:</label>
+      <select id="nivel">
+        <option value="PRIMARIA">Primaria</option>
+        <option value="MEDIA SUPERIOR">Media Superior</option>
+        <option value="PREESCOLAR">Preescolar</option>
+        <option value="SUPERIOR">Superior</option> 
+        <option value="INICIAL">Inicial</option> 
+        
+        </select>
+
+        <label for="ambito">Ambito:</label>
+        <select id="ambito">
+          <option value="URBANO">Urbano</option>
+          <option value="RURAL">Rural</option>
+          
+             
+          </select>
+
+          <label for="sostenimiento">Sostenimiento:</label>
+          <select id="sostenimiento">
+            <option value="PRIVADO">Privado</option>
+            <option value="PUBLICO">Publico</option>
+            
+               
+            </select>
+
+
+            <label for="subcontrol">Sostenimiento subcontrol:</label>
+          <select id="subcontrol">
+            <option value="PRIVADO">Privado</option>
+            <option value="FEDERAL TRANSFERIDO">Federal Transferido</option>
+            <option value="FEDERAL">Federal </option>
+            <option value="SUBSIDIO">Subsidio </option> 
+            <option value="ESTATAL">Estatal </option> 
+            </select>
+
+        <button type="button" onclick="mapearCentros()">Mapear</button>
+      </form>
+      <div id="map"></div>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkHyWs_avynZ_gkzWysPcxlJRZZQEbHUM"></script>
+      <script>
+        let map;
+      
+        function initMap() {
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 19.432608, lng: -99.133209 },
+            zoom: 6,
+          });
+        }
+      
+        function mapearCentros() {
+          const estado = document.getElementById("estado").value;
+          const nivel = document.getElementById("nivel").value;
+          const ambito=document.getElementById("ambito").value;
+          const sostenimiento=document.getElementById("sostenimiento").value;
+          const subcontrol=document.getElementById("subcontrol").value;
+
+          initMap();
+
+          fetch(`/centros?estado=${estado}&nivel=${nivel}&ambito=${ambito}&sostenimiento=${sostenimiento}&subcontrol=${subcontrol}`)
+            .then(response => response.json())
+            .then(data => {
+              
+              data.forEach(centro => {
+                
+                const latLng = new google.maps.LatLng(centro.latitud, centro.longitud);
+                const marker = new google.maps.Marker({
+                  position: latLng,
+                  map: map,
+                  title: centro.nombre
+                });
+                marker.addListener("click", () => {
+                  
+                  const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                      <div>
+                        <h4>${centro.nombre}</h4>
+                        <p>Estado: ${centro.estado}</p>
+                        <p>Nivel: ${centro.nivel}</p>
+                        <p>Ambito: ${centro.ambito}</p>
+                        <p>Sostenimiento: ${centro.sostenimiento}</p>
+                        <p>Sostenimiento Subcontrol: ${centro.subcontrol}</p>
+
+                        <p>Dirección: ${centro.direccion}</p>
+                        
+                      </div>
+                    `
+                  });
+                  infoWindow.open(map, marker);
+                });
+              });
+            })
+            .catch(error => console.error(error));
+        }
+      </script>
+        </body>
+        </html>
