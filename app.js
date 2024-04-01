@@ -19,7 +19,7 @@ fs.createReadStream('centros-trabajo.csv')
 
 // Configurar la API de Google Maps
 const { google } = require('googleapis');
-const apiKey = 'AIzaSyDkHyWs_avynZ_gkzWysPcxlJRZZQEbHUM';
+const apiKey = '';
 const maps = google.blogger({
   version: 'v3',
   key: apiKey
